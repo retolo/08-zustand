@@ -1,16 +1,25 @@
 import {create} from 'zustand';
-import { CreateNoteTask } from '../api';
+
 import { persist } from 'zustand/middleware';
+
+
+ interface CreateTask{
+    title: string
+    content: string
+    tag: 'Todo' | string
+
+}
+
 type NoteDraftStore = {
-    draft: CreateNoteTask,
-    setDraft: (note: CreateNoteTask) => void,
+    draft: CreateTask,
+    setDraft: (note: CreateTask) => void,
     clearDraft: () => void,
 }
 
-const initialDraft: CreateNoteTask = {
+const initialDraft: CreateTask = {
     title: '',
     content: '',
-    tag: '',
+    tag: 'Todo',
 }
 
 
@@ -18,7 +27,7 @@ export const useNoteDraft = create<NoteDraftStore>()(
     persist(
         (set) =>({
             draft: initialDraft,
-            setDraft: (newData: CreateNoteTask) => set({draft: newData}),
+            setDraft: (newData: CreateTask) => set({draft: newData}),
             clearDraft: () => set({draft: initialDraft})
         }),
         {

@@ -22,10 +22,10 @@ interface NotesClientProps {
 export default function NotesClient({initialData, initialTag}: NotesClientProps){
     
     
+    
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [currentTag, setCurrentTag] = useState<string | null>(initialTag);
-    const [debouncedSearch, setDebouncedSearch] = useDebounce(
+    const [pageQuery, setCurrentPage] = useState<number>(1);
+    const [searchText] = useDebounce(
         searchQuery,
         300,
     )
@@ -33,21 +33,17 @@ export default function NotesClient({initialData, initialTag}: NotesClientProps)
         
     
 
-     useEffect(() =>{
-        setCurrentTag(initialTag)
-        setCurrentPage(1)
-        setDebouncedSearch('')
-     }, [currentTag, initialTag, setDebouncedSearch])
+    
 
      
     
         
-    const {data} = useQuery({
-        queryKey: ['notes', debouncedSearch, currentPage, currentTag],
+     const {data} = useQuery({
+        queryKey: ['notes', searchText, pageQuery, initialTag],
         queryFn: () => fetchNotes({
-            ...(debouncedSearch.trim() ? {searchText: debouncedSearch}: {}),
-            pageQuery: currentPage,
-            tagNote: currentTag
+            ...(searchText.trim() ? {searchText: searchText}: {}),
+            pageQuery: pageQuery,
+            tagNote: initialTag
         }),
         placeholderData: keepPreviousData, initialData
     })
@@ -73,10 +69,14 @@ export default function NotesClient({initialData, initialTag}: NotesClientProps)
                     setSearchQuery(value);
                     setCurrentPage(1)
                 }}/>
-                <button className={css.button} type='button'>
-                    <Link href={`/notes/action/create`} className={css.button}>Create note +</Link>
+                
+                    <Link href={`/notes/action/create`} className={css.button}>
+                        <button className={css.button} type='button'>
+                            Create note +
+                        </button>
+                    </Link>
                     
-                </button>
+                
 
                 
             </header>
@@ -85,7 +85,7 @@ export default function NotesClient({initialData, initialTag}: NotesClientProps)
                 : <p>No notes found.</p>
             }
             {totalPages !== undefined && totalPages > 1 &&
-                <Pagination totalPages={totalPages} currentPage={currentPage} onPageSelect={setCurrentPage}/>
+                <Pagination totalPages={totalPages} currentPage={pageQuery} onPageSelect={setCurrentPage}/>
 
             }
             

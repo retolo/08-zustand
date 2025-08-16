@@ -8,7 +8,7 @@ interface FetchNotesProps{
     totalPages: number
 }
 
-interface CreateNoteTask{
+export interface CreateNoteTask{
     title: string
     content: string
     tag: string
